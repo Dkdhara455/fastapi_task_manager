@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-jose
+passlib[bcrypt]
+pydantic
+sqlalchemy
+
+#for install everything 
+#pip install -r requirements.txt
