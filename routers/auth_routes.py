@@ -1,7 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
+from models import *
+from jose import JWTError,jwt
+from auth import ALGORITHM,SECRET_KEY
 
 import models, schemas
 from database import SessionLocal
@@ -41,5 +44,26 @@ def logout(token: str = Depends(oauth2_scheme)):
     blacklist.add(token)
     return {"message": "Logged out successfully"}
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    return decode_access_token(token)
+def get_current_user(token: str = Depends(oauth2_scheme),db: Session = Depends(get_db)):
+    payload = decode_access_token(token)
+    if payload is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    return payload
+
+def decode_access_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload  # This will be a dict with "sub"
+    except JWTError:
+        return None
+
+@router.delete("/auth/delete-account")
+def delete_own_account(db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)):
+    # Delete current authenticated user
+    username = current_user.get("sub")
+    db_user = db.query(User).filter(User.username == username).first()
+    if db_user:
+        db.delete(db_user)
+        db.commit()
+        return {"message": "Account deleted successfully"}
+    raise HTTPException(status_code=404, detail="User not found")
