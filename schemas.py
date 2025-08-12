@@ -1,4 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,validator
+import re
+from fastapi import HTTPException
 
 # TASK 
 class TaskBase(BaseModel):
@@ -21,6 +23,15 @@ class TaskResponse(TaskBase):
 class UserCreate(BaseModel):
     username: str
     password: str
+    @validator("password")
+    def validate_password(cls, v):
+        if len(v) < 5:
+            raise ValueError("Password must be at least 5 characters long.")
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
+            raise ValueError("Password must contain at least one special character.")
+        if not re.search(r"\d", v):
+            raise ValueError("Password must contain at least one digit.")
+        return v
 
 class UserResponse(BaseModel):
     id: int
