@@ -5,12 +5,19 @@ Authentication is handled using **JWT (JSON Web Tokens)**, so only logged-in use
 
 ## Features
 ->User Registration with:
+
     ->Password hashing (using passlib)
+
     ->Password validation (must have at least one number, one special symbol, and be ≥ 5 characters)
+
 ->JWT Authentication for login-protected endpoints
+
 ->Create, Read, Update, Delete Tasks
-->Delete Own Account (removes user from DB and ->invalidates token)
+
+->Delete Own Account (removes user from DB andinvalidates token)
+
 ->Automatic Logout on account deletion
+
 ->Swagger UI for API exploration
 
 **Clone the repository**  
