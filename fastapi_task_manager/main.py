@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-import models
-from database import engine
+import fastapi_task_manager.fastapi_task_manager.models as models
+from fastapi_task_manager.fastapi_task_manager.database import engine
 from routers import auth_routes, task_routes
 
 models.Base.metadata.create_all(bind=engine)
