@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException,status
+from fastapi import APIRouter, Depends, HTTPException, dependencies,status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
@@ -56,6 +56,20 @@ def decode_access_token(token: str):
         return payload  # This will be a dict with "sub"
     except JWTError:
         return None
+
+# def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
+#     if current_user.disabled:
+#         raise HTTPException(status_code=400, detail="Inactive user")
+#     return current_user
+
+@router.get("/auth/profile", response_model=schemas.UserResponse)
+def read_current_user(current_user: dict = Depends(get_current_user),db:Session=Depends(get_db)):
+    user_name=current_user.get("sub")
+    user=db.query(models.User).filter(models.User.username==user_name).first()
+    if not user:
+        raise HTTPException(status_code=404,detail="user not found")
+    return user
+
 
 @router.delete("/auth/delete-account")
 def delete_own_account(db: Session = Depends(get_db),current_user: dict = Depends(get_current_user)):
