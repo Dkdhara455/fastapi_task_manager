@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean
-from fastapi_task_manager.fastapi_task_manager.database import Base
+from database import Base
+# import fastapi_task_manager.models as models
 
 class Task(Base):
     __tablename__ = "tasks"

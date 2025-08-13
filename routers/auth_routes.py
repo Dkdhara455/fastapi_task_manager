@@ -2,13 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, dependencies,status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
-from fastapi_task_manager.fastapi_task_manager.models import *
+from models import *
 from jose import JWTError,jwt
-from fastapi_task_manager.fastapi_task_manager.auth import ALGORITHM,SECRET_KEY
+from auth import ALGORITHM,SECRET_KEY
+# from database import get_db
+import models
 
-import fastapi_task_manager.fastapi_task_manager.models as models, fastapi_task_manager.fastapi_task_manager.schemas as schemas
-from fastapi_task_manager.fastapi_task_manager.database import SessionLocal
-from fastapi_task_manager.fastapi_task_manager.auth import verify_password, get_password_hash, create_access_token, decode_access_token, blacklist
+import models as models, schemas as schemas
+from database import SessionLocal
+from auth import verify_password, get_password_hash, create_access_token, decode_access_token, blacklist
 
 router = APIRouter(tags=["Authentication"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
